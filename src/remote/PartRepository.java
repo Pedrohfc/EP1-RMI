@@ -8,7 +8,7 @@ public interface PartRepository extends Remote {
 
 	String getName() throws RemoteException;
 	
-	long getNumParts() throws RemoteException;
+	int getNumParts() throws RemoteException;
 	
 	List<Part> getParts() throws RemoteException;
 	
