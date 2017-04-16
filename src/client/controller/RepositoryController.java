@@ -26,7 +26,17 @@ public class RepositoryController {
 		} catch (RemoteException e) {
 			repositories = Collections.emptyList();
 		}
-		app.setCurrentScreen(new RepositoriesListView().render(repositories));
+		app.setCurrentScreen(new RepositoriesListView(this, repositories).render());
+	}
+	
+	public void connectToRepository(String name, String host, int port) {
+		try {
+			Registry rg = LocateRegistry.getRegistry(host,port);
+			PartRepository pr = (PartRepository) rg.lookup(name);
+			app.setCurrentScreen(new RepositoryView(this, pr).render());
+		} catch (Exception e) {
+			index();
+		}
 	}
 	
 	public ServerMaster getServerMaster() {

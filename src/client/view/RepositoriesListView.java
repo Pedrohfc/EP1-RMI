@@ -5,47 +5,66 @@ import java.util.List;
 import java.awt.BorderLayout;
 
 import remote.*;
+import client.controller.RepositoryController;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
-public class RepositoriesListView {
+public class RepositoriesListView implements View {
 
+	private RepositoryController controller;
+	private JPanel panel;
+	private JTable repTable;
+	private RepositoryTableModel tableData;
+	private List<PartRepository> repositories;
+	private String errorMessage;
+	
+	public RepositoriesListView(RepositoryController rc, List<PartRepository> reps) {
+		this.controller = rc;
+		this.repositories = reps;
+	}
 
-	public JComponent render(List<PartRepository> repositories) {
-		JPanel panel = new JPanel(new BorderLayout());
+	@Override
+	public JComponent render() {
+		panel = new JPanel(new BorderLayout());
+		
 		JLabel message = new JLabel("Escolha um Repositório: ", SwingConstants.CENTER);
-		JTable repTable = new JTable();
-		repTable.setModel(new RepositoryTableModel(repositories));
+		
+		panel.add(message, BorderLayout.NORTH);
+		
+		buildTable();
+		buildButtons();
+		
+		return panel;
+	}
+	
+	private void buildTable() {
+		repTable = new JTable();
+		tableData = new RepositoryTableModel(repositories);
+		repTable.setModel(tableData);
 		JScrollPane scroll = new JScrollPane();
 		scroll.getViewport().add(repTable);
+		panel.add(scroll, BorderLayout.CENTER);
+	}
+	
+	private void buildButtons() {
 		JButton connect = new JButton("Conectar");
+		connect.addActionListener(e -> {
+			int row = repTable.getSelectedRow();
+			String name = (String) tableData.getValueAt(row,0);
+			String host = (String) tableData.getValueAt(row,1);
+			int port = (int) tableData.getValueAt(row,2);
+			controller.connectToRepository(name, host, port);
+		});
+		
 		JButton exit = new JButton("Sair");
 		exit.addActionListener(e -> System.exit(0));
+		
 		JPanel buttons = new JPanel();
 		buttons.add(connect);
 		buttons.add(exit);
 		
-		panel.add(message, BorderLayout.NORTH);
-		panel.add(scroll, BorderLayout.CENTER);
 		panel.add(buttons, BorderLayout.SOUTH);
-		return panel;
-	}
-	
-	
-	public static void main(String[] args) {
-		try {
-			Registry rg = LocateRegistry.getRegistry(1500);
-			ServerMaster sm = (ServerMaster) rg.lookup("ServerMaster");
-			JFrame teste = new JFrame();
-			RepositoriesListView view = new RepositoriesListView();
-			teste.add(view.render(sm.getRepositories()));
-			teste.pack();
-			teste.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			teste.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 	
 }
