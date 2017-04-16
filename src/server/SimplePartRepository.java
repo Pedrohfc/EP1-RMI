@@ -14,13 +14,16 @@ public class SimplePartRepository extends UnicastRemoteObject implements PartRep
 	
 	private List<Part> parts;
 	private long nextCode;
-	private String repositoryName;
+	private String repositoryName, host;
+	private int port;
 
-	public SimplePartRepository(String name) throws RemoteException {
+	public SimplePartRepository(String name, String host, int port) throws RemoteException {
 		super();
 		parts = new ArrayList<>();
 		nextCode = 1;
 		repositoryName = name;
+		this.host = host;
+		this.port = port;
 	}
 
 	@Override
@@ -33,6 +36,16 @@ public class SimplePartRepository extends UnicastRemoteObject implements PartRep
 	@Override
 	public String getName() throws RemoteException {
 		return this.repositoryName;
+	}
+	
+	@Override
+	public String getHost() throws RemoteException {
+		return this.host;
+	}
+	
+	@Override
+	public int getPort() throws RemoteException {
+		return this.port;
 	}
 
 	@Override

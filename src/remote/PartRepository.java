@@ -8,6 +8,10 @@ public interface PartRepository extends Remote {
 
 	String getName() throws RemoteException;
 	
+	String getHost() throws RemoteException;
+	
+	int getPort() throws RemoteException;
+	
 	int getNumParts() throws RemoteException;
 	
 	List<Part> getParts() throws RemoteException;

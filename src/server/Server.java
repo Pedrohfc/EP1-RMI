@@ -11,13 +11,14 @@ public class Server {
 		try {
 			String serverName = args[0];
 			int port = Integer.parseInt(args[1]);
-			PartRepository pr = new SimplePartRepository(serverName);
+			String host = "127.0.0.1";
+			PartRepository pr = new SimplePartRepository(serverName, host, port);
 			Registry rg = LocateRegistry.createRegistry(port);
 			rg.bind(serverName, pr);
 			
 			System.out.println("Server "+serverName+" started at port "+port);
 			
-			Registry server = LocateRegistry.getRegistry("127.0.0.1", 1500);
+			Registry server = LocateRegistry.getRegistry(host, 1500);
 			ServerMaster sm = (ServerMaster) server.lookup("ServerMaster");
 			sm.addRepository(pr);
 		} catch (Exception e) {
