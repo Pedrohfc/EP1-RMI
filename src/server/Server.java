@@ -14,7 +14,12 @@ public class Server {
 			PartRepository pr = new SimplePartRepository(serverName);
 			Registry rg = LocateRegistry.createRegistry(port);
 			rg.bind(serverName, pr);
+			
 			System.out.println("Server "+serverName+" started at port "+port);
+			
+			Registry server = LocateRegistry.getRegistry("127.0.0.1", 1500);
+			ServerMaster sm = (ServerMaster) server.lookup("ServerMaster");
+			sm.addRepository(pr);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
