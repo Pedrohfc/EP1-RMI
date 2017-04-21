@@ -9,6 +9,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Collections;
+import java.util.ArrayList;
 
 public class RepositoryController {
 	ClientApp app;
@@ -19,19 +20,21 @@ public class RepositoryController {
 	
 	public void index() {
 		
-		ServerMaster server = getServerMaster();
-		List<PartRepository> repositories;
+		List<PartRepository> repositories = new ArrayList<>();
+		/*
 		try {
-			repositories = server.getRepositories();
+			repositories = new ArrayList<>();
+			
 		} catch (RemoteException e) {
 			repositories = Collections.emptyList();
 		}
+		*/
 		app.setCurrentScreen(new RepositoriesListView(this, repositories).render());
 	}
 	
 	public void connectToRepository(String name, String host, int port) {
 		try {
-			Registry rg = LocateRegistry.getRegistry(host,port);
+			Registry rg = LocateRegistry.getRegistry();
 			PartRepository pr = (PartRepository) rg.lookup(name);
 			app.setCurrentScreen(new RepositoryView(this, pr).render());
 		} catch (Exception e) {
@@ -39,17 +42,4 @@ public class RepositoryController {
 		}
 	}
 	
-	public ServerMaster getServerMaster() {
-		String name = "ServerMaster";
-		String host = "127.0.0.1";
-		int port = 1500;
-		try {
-			Registry rg = LocateRegistry.getRegistry(host,port);
-			ServerMaster server = (ServerMaster) rg.lookup(name);
-			return server;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
 }

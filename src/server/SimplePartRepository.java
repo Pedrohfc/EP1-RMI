@@ -10,7 +10,6 @@ import remote.PartRepository;
 
 public class SimplePartRepository extends UnicastRemoteObject implements PartRepository {
 	
-	private static final long serialVersionUID = 8480705212859205173L;
 	
 	private List<Part> parts;
 	private long nextCode;
