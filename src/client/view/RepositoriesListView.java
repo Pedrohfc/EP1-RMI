@@ -16,10 +16,10 @@ public class RepositoriesListView implements View {
 	private JPanel panel;
 	private JTable repTable;
 	private RepositoryTableModel tableData;
-	private List<PartRepository> repositories;
+	private String[] repositories;
 	private String errorMessage;
 	
-	public RepositoriesListView(RepositoryController rc, List<PartRepository> reps) {
+	public RepositoriesListView(RepositoryController rc, String[] reps) {
 		this.controller = rc;
 		this.repositories = reps;
 	}
@@ -40,8 +40,14 @@ public class RepositoriesListView implements View {
 	
 	private void buildTable() {
 		repTable = new JTable();
-		tableData = new RepositoryTableModel(repositories);
-		repTable.setModel(tableData);
+		//tableData = new RepositoryTableModel(repositories);
+		//repTable.setModel(tableData);
+		String[][] rowData = new String[repositories.length][1];
+		for (int i = 0; i < repositories.length; i++) {
+			rowData[i][0] = repositories[i];
+		}
+		String[] columnNames = {"Nome"};
+		repTable = new JTable(rowData, columnNames);
 		JScrollPane scroll = new JScrollPane();
 		scroll.getViewport().add(repTable);
 		panel.add(scroll, BorderLayout.CENTER);
@@ -51,9 +57,9 @@ public class RepositoriesListView implements View {
 		JButton connect = new JButton("Conectar");
 		connect.addActionListener(e -> {
 			int row = repTable.getSelectedRow();
-			String name = (String) tableData.getValueAt(row,0);
-			String host = (String) tableData.getValueAt(row,1);
-			int port = (int) tableData.getValueAt(row,2);
+			String name = repositories[row];
+			String host = "";
+			int port = 0;
 			controller.connectToRepository(name, host, port);
 		});
 		

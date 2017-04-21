@@ -45,7 +45,7 @@ public class RepositoryView implements View {
 			JTextArea ok = new JTextArea(repMessage);
 			panel.add(ok, BorderLayout.CENTER);
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 	}
 }

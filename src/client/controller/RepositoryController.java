@@ -10,6 +10,7 @@ import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Collections;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 
 public class RepositoryController {
 	ClientApp app;
@@ -20,17 +21,13 @@ public class RepositoryController {
 	
 	public void index() {
 		
-		List<PartRepository> repositories;
+		String[] repositories;
 		try {
-			repositories = new ArrayList<>();
 			Registry rg = LocateRegistry.getRegistry();
-			String[] repositoryNames = rg.list();
-			for (String name : repositoryNames) {
-				PartRepository repository = (PartRepository) rg.lookup(name);
-				repositories.add(repository);
-			}
+			repositories = rg.list();
+			
 		} catch (Exception e) {
-			repositories = Collections.emptyList();
+			repositories = null;
 		}
 		app.setCurrentScreen(new RepositoriesListView(this, repositories).render());
 	}
@@ -42,6 +39,7 @@ public class RepositoryController {
 			app.setCurrentScreen(new RepositoryView(this, pr).render());
 		} catch (Exception e) {
 			index();
+			JOptionPane.showMessageDialog(null, "Não foi possivel conectar ao servidor");
 		}
 	}
 	
