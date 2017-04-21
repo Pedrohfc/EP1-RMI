@@ -20,15 +20,18 @@ public class RepositoryController {
 	
 	public void index() {
 		
-		List<PartRepository> repositories = new ArrayList<>();
-		/*
+		List<PartRepository> repositories;
 		try {
 			repositories = new ArrayList<>();
-			
-		} catch (RemoteException e) {
+			Registry rg = LocateRegistry.getRegistry();
+			String[] repositoryNames = rg.list();
+			for (String name : repositoryNames) {
+				PartRepository repository = (PartRepository) rg.lookup(name);
+				repositories.add(repository);
+			}
+		} catch (Exception e) {
 			repositories = Collections.emptyList();
 		}
-		*/
 		app.setCurrentScreen(new RepositoriesListView(this, repositories).render());
 	}
 	
