@@ -48,6 +48,7 @@ public class RepositoriesListView implements View {
 		}
 		String[] columnNames = {"Nome"};
 		repTable = new JTable(rowData, columnNames);
+		repTable.setDefaultEditor(Object.class, null);
 		JScrollPane scroll = new JScrollPane();
 		scroll.getViewport().add(repTable);
 		panel.add(scroll, BorderLayout.CENTER);

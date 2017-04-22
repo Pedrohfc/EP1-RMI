@@ -1,11 +1,12 @@
 package server;
 
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 
 import remote.Part;
 
-public class SimplePart implements Part {
+public class SimplePart extends UnicastRemoteObject implements Part {
 
 	private long code;
 	private String name;
@@ -13,7 +14,7 @@ public class SimplePart implements Part {
 	private List<Part> subparts;
 	private String repository;
 	
-	public SimplePart(long c, String n, String d, List<Part> sp, String r) {
+	public SimplePart(long c, String n, String d, List<Part> sp, String r) throws RemoteException {
 		this.code = c;
 		this.name = n;
 		this.description = d;

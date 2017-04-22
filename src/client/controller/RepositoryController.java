@@ -13,18 +13,26 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 public class RepositoryController {
-	ClientApp app;
+	private ClientApp app;
+	private Registry registry;
+	private List<Part> currentPart;
+	private PartRepository currentRepository;
 	
 	public RepositoryController(ClientApp app) {
 		this.app = app;
+		currentPart = new ArrayList<>();
+		try {
+			this.registry = LocateRegistry.getRegistry();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void index() {
 		
 		String[] repositories;
 		try {
-			Registry rg = LocateRegistry.getRegistry();
-			repositories = rg.list();
+			repositories = registry.list();
 			
 		} catch (Exception e) {
 			repositories = null;
@@ -34,12 +42,22 @@ public class RepositoryController {
 	
 	public void connectToRepository(String name, String host, int port) {
 		try {
-			Registry rg = LocateRegistry.getRegistry();
-			PartRepository pr = (PartRepository) rg.lookup(name);
-			app.setCurrentScreen(new RepositoryView(this, pr).render());
+			currentRepository = (PartRepository) registry.lookup(name);
+			app.setCurrentScreen(new RepositoryView(this, currentRepository,currentPart).render());
 		} catch (Exception e) {
+			e.printStackTrace();
 			index();
 			JOptionPane.showMessageDialog(null, "Não foi possivel conectar ao servidor");
+		}
+	}
+	
+	public void create(String name, String description) {
+		try {
+			currentRepository.addPart(name, description, currentPart);
+			currentPart = new ArrayList<>();
+			app.setCurrentScreen(new RepositoryView(this, currentRepository,currentPart).render());
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	
