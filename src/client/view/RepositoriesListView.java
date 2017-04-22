@@ -16,10 +16,10 @@ public class RepositoriesListView implements View {
     private JPanel panel;
     private JTable repTable;
     private RepositoryTableModel tableData;
-    private String[] repositories;
+    private List<PartRepository> repositories;
     private String errorMessage;
 
-    public RepositoriesListView(RepositoryController rc, String[] reps) {
+    public RepositoriesListView(RepositoryController rc, List<PartRepository> reps) {
         this.controller = rc;
         this.repositories = reps;
     }
@@ -39,29 +39,31 @@ public class RepositoriesListView implements View {
     }
 
     private void buildTable() {
-        repTable = new JTable();
-        //tableData = new RepositoryTableModel(repositories);
-        //repTable.setModel(tableData);
-        String[][] rowData = new String[repositories.length][1];
-        for (int i = 0; i < repositories.length; i++) {
-            rowData[i][0] = repositories[i];
+    	try {
+		    repTable = new JTable();
+		    //tableData = new RepositoryTableModel(repositories);
+		    //repTable.setModel(tableData);
+		    Object[][] rowData = new Object[repositories.size()][2];
+		    for (int i = 0; i < repositories.size(); i++) {
+		        rowData[i][0] = repositories.get(i).getName();
+		        rowData[i][1] = repositories.get(i).getNumParts();
+		    }
+		    String[] columnNames = {"Nome", "Peças"};
+		    repTable = new JTable(rowData, columnNames);
+		    repTable.setDefaultEditor(Object.class, null);
+		    JScrollPane scroll = new JScrollPane();
+		    scroll.getViewport().add(repTable);
+		    panel.add(scroll, BorderLayout.CENTER);
+        } catch (Exception e) {
+        	throw new RuntimeException(e);
         }
-        String[] columnNames = {"Nome"};
-        repTable = new JTable(rowData, columnNames);
-        repTable.setDefaultEditor(Object.class, null);
-        JScrollPane scroll = new JScrollPane();
-        scroll.getViewport().add(repTable);
-        panel.add(scroll, BorderLayout.CENTER);
     }
 
     private void buildButtons() {
         JButton connect = new JButton("Conectar");
         connect.addActionListener(e -> {
             int row = repTable.getSelectedRow();
-            String name = repositories[row];
-            String host = "";
-            int port = 0;
-            controller.connectToRepository(name, host, port);
+            controller.connectToRepository(repositories.get(row));
         });
 
         JButton exit = new JButton("Sair");

@@ -31,9 +31,14 @@ public class RepositoryController {
 
     public void index() {
 
-        String[] repositories;
+        List<PartRepository> repositories;
         try {
-            repositories = registry.list();
+            repositories = new ArrayList<>();
+            String[] nameReps = registry.list();
+            for (String name : nameReps) {
+            	PartRepository repository = (PartRepository) registry.lookup(name);
+            	repositories.add(repository);
+            }
 
         } catch (Exception e) {
             repositories = null;
@@ -41,15 +46,9 @@ public class RepositoryController {
         app.setCurrentScreen(new RepositoriesListView(this, repositories).render());
     }
 
-    public void connectToRepository(String name, String host, int port) {
-        try {
-            currentRepository = (PartRepository) registry.lookup(name);
-            app.setCurrentScreen(new RepositoryView(this, currentRepository, currentPart).render());
-        } catch (Exception e) {
-            e.printStackTrace();
-            index();
-            JOptionPane.showMessageDialog(null, "Não foi possivel conectar ao servidor");
-        }
+    public void connectToRepository(PartRepository repository) {
+        currentRepository = repository;
+        app.setCurrentScreen(new RepositoryView(this, currentRepository, currentPart).render());
     }
 
     public void create(String name, String description) {

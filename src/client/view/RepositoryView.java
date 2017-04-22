@@ -64,11 +64,12 @@ public class RepositoryView implements View {
         try {
             JPanel repList = new JPanel(new BorderLayout());
             List<Part> parts = repository.getParts();
-            String[][] rowData = new String[parts.size()][2];
-            String[] columnNames = {"código", "nome"};
+            String[][] rowData = new String[parts.size()][3];
+            String[] columnNames = {"código", "nome", "Subcomponentes"};
             for (int i = 0; i < parts.size(); i++) {
                 rowData[i][0] = "" + parts.get(i).getCode();
                 rowData[i][1] = parts.get(i).getName();
+                rowData[i][2] = "" + parts.get(i).getNumPrimitiveSubparts();
             }
             partList = new JTable(rowData, columnNames);
             partList.setDefaultEditor(Object.class, null);
@@ -165,8 +166,12 @@ public class RepositoryView implements View {
         create.addActionListener(e -> controller.create(nameTxt.getText(), descriptionTxt.getText()));
         JButton erase = new JButton("Limpar");
         erase.addActionListener(e -> {
-                currentPart.clear();
-                });
+        	DefaultTableModel model = (DefaultTableModel) subp.getModel();
+        	for (int i = currentPart.size()-1; i >= 0; i--) {
+        		model.removeRow(i);
+        	}
+        	currentPart.clear();
+        });
         buttons.add(create);
         buttons.add(erase);
         return buttons;
