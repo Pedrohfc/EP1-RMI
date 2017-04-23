@@ -16,7 +16,7 @@ public class ClientApp {
     public void startApp() {
         //frame.pack();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        new RepositoryController(this).index();
+        new RepositoryController(this).server();
         frame.setVisible(true);
     }
 

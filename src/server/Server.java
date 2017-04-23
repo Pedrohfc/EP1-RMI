@@ -2,6 +2,7 @@ package server;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.Naming;
 
 import remote.*;
 
@@ -11,16 +12,17 @@ public class Server {
     private int port;
     private String host;
 
-    public Server(String name, int port) {
+    public Server(String name, String host) {
         this.serverName = name;
-        this.port = port;
-        this.host = "127.0.0.1";
+        this.port = 1099;
+        //this.host = "127.0.0.1";
+        this.host = host;
     }
 
     public void startServer() {
         try {
             PartRepository pr = new SimplePartRepository(serverName, host, port);
-            Registry rg = LocateRegistry.getRegistry();
+            Registry rg = LocateRegistry.getRegistry(host);
             rg.bind(serverName, pr);
 
             System.out.println("Server " + serverName + " started at port " + port);
@@ -42,7 +44,7 @@ public class Server {
     }
 
     public static void main(String[] args) {
-        new Server(args[0], Integer.parseInt(args[1])).startServer();
+        new Server(args[0], args[1]).startServer();
     }
 
 }

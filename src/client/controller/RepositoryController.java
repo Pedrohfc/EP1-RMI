@@ -22,11 +22,22 @@ public class RepositoryController {
     public RepositoryController(ClientApp app) {
         this.app = app;
         currentPart = new ArrayList<>();
-        try {
-            this.registry = LocateRegistry.getRegistry();
+        
+    }
+    
+    public void server() {
+    	app.setCurrentScreen(new ServerView(this).render());
+    }
+    
+    public void connectServer(String host, String port) {
+    	try {
+            this.registry = LocateRegistry.getRegistry(host, Integer.parseInt(port));
+            index();
         } catch (Exception e) {
             e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Não foi possivel conectar ao servidor");
         }
+        
     }
 
     public void index() {
