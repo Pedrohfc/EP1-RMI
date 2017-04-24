@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Collections;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
+import javax.swing.JFrame;
 
 public class RepositoryController {
 
@@ -83,6 +84,26 @@ public class RepositoryController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    public void info(Part part) {
+    	JFrame partInfo = new JFrame("Info");
+    	partInfo.setContentPane(new PartView(this, part).render());
+    	partInfo.pack();
+    	partInfo.setVisible(true);
+    }
+    
+    public void search(long code) {
+    	try {
+    		Part part = currentRepository.getPart(code);
+    		if (part == null) {
+    			JOptionPane.showMessageDialog(null, "Esse repositório não possui nenhuma peça com o código "+code);
+    		} else {
+    			info(part);
+    		}
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
     }
 
 }

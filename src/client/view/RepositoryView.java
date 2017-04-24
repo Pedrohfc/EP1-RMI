@@ -9,6 +9,8 @@ import javax.swing.table.DefaultTableModel;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 
 import java.util.List;
@@ -20,8 +22,9 @@ public class RepositoryView implements View {
     private JPanel panel;
     private List<Part> currentPart;
     private JLabel nameLabel, descriptionLabel;
-    private JTextField nameTxt, descriptionTxt;
+    private JTextField nameTxt, descriptionTxt, searchCode;
     private JTable subp, partList;
+
 
     public RepositoryView(RepositoryController rc, PartRepository pr, List<Part> part) {
         this.controller = rc;
@@ -42,15 +45,53 @@ public class RepositoryView implements View {
 
     private void buildMessage() {
         try {
+        	JPanel header = new JPanel(new GridBagLayout());
+        	
             String repMessage = "Conectado ao repositorio " + repository.getName();
-            repMessage += "\nNo host " + repository.getHost();
-            repMessage += "\nNa porta " + repository.getPort();
-            JTextArea ok = new JTextArea(repMessage);
-            ok.setEditable(false);
-            panel.add(ok, BorderLayout.NORTH);
+            GridBagConstraints c = new GridBagConstraints();
+            c.anchor = GridBagConstraints.CENTER;
+            c.gridx = 0;
+            c.gridy = 0;
+            c.gridwidth = 2;
+            
+            JLabel repositoryInfo = new JLabel(repMessage, SwingConstants.CENTER);
+            repositoryInfo.setFont(repositoryInfo.getFont().deriveFont(30.0f));
+            
+            header.add(repositoryInfo, c);
+            
+            c.anchor = GridBagConstraints.LINE_END;
+            c.gridx = 2;
+            c.gridy = 0;
+            c.gridwidth = 1;
+            
+            header.add(buildSearch(), c);
+            
+            panel.add(header, BorderLayout.NORTH);
+            
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+    
+    private JComponent buildSearch() {
+    	JPanel search = new JPanel();
+    	searchCode = new JTextField();
+        searchCode.setColumns(15);
+        
+        JButton searchButton = new JButton("Buscar Peça");
+        searchButton.addActionListener(event -> {
+        	try {
+		    	long code = Long.parseLong(searchCode.getText());
+		    	controller.search(code);
+		    	searchCode.setText("");
+        	} catch (NumberFormatException e) {
+        		JOptionPane.showMessageDialog(null, "Digite um código válido");
+        	}
+        });
+        
+        search.add(searchCode);
+        search.add(searchButton);
+        return search;
     }
 
     private void buildListPanel() {
@@ -65,7 +106,7 @@ public class RepositoryView implements View {
             JPanel repList = new JPanel(new BorderLayout());
             List<Part> parts = repository.getParts();
             String[][] rowData = new String[parts.size()][3];
-            String[] columnNames = {"código", "nome", "Subcomponentes"};
+            String[] columnNames = {"Código", "Nome", "Subcomponentes"};
             for (int i = 0; i < parts.size(); i++) {
                 rowData[i][0] = "" + parts.get(i).getCode();
                 rowData[i][1] = parts.get(i).getName();
@@ -111,7 +152,7 @@ public class RepositoryView implements View {
                 Part selected = p.get(row);
                 
                 JOptionPane.showMessageDialog(null, selected.getInfo());
-                
+                controller.info(selected);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -128,7 +169,7 @@ public class RepositoryView implements View {
             partPanel.add(title, BorderLayout.NORTH);
             JPanel partInfo = new JPanel(new BorderLayout());
             partInfo.add(buildForm(), BorderLayout.NORTH);
-            String[] columnNames = {"nome", "repositório"};
+            String[] columnNames = {"Nome", "Repositório"};
             String[][] rowData = new String[currentPart.size()][2];
             for (int i = 0; i < currentPart.size(); i++) {
                 rowData[i][0] = currentPart.get(i).getName();

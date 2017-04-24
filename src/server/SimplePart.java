@@ -46,7 +46,7 @@ public class SimplePart extends UnicastRemoteObject implements Part {
     public int getNumPrimitiveSubparts() throws RemoteException {
         int c = 0;
 		for (Part subpart : subparts) {
-			if(subpart.type().equals("Primitive"))
+			if(subpart.type().equals("Primitiva"))
 				c++;
 			else
 				c+= subpart.getNumPrimitiveSubparts();
@@ -67,9 +67,9 @@ public class SimplePart extends UnicastRemoteObject implements Part {
     @Override
     public String type() throws RemoteException {
         if (this.subparts.size() == 0) {
-            return "Primitive";
+            return "Primitiva";
         }
-        return "Set of subparts";
+        return "Agregada";
     }
 
     @Override

@@ -3,6 +3,9 @@ package client;
 import javax.swing.JFrame;
 import javax.swing.JComponent;
 
+import javax.swing.UIManager.*;
+import javax.swing.UIManager;
+
 import client.controller.*;
 
 public class ClientApp {
@@ -14,7 +17,6 @@ public class ClientApp {
     }
 
     public void startApp() {
-        //frame.pack();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         new RepositoryController(this).server();
         frame.setVisible(true);
@@ -26,6 +28,16 @@ public class ClientApp {
     }
 
     public static void main(String[] args) {
+    	try {
+    		for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+    			if (info.getName().equals("Nimbus")) {
+    				UIManager.setLookAndFeel(info.getClassName());
+    				break;
+    			}
+    		}
+    	} catch (Exception e) {
+    		// Nimbus nao disponivel :(
+    	}
         new ClientApp().startApp();
     }
 }
